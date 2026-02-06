@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Master</title>
+    <!-- React 및 ReactDOM 라이브러리 -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel (JSX 변환용) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS (스타일링) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animate-bounce-short {
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(0); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2s infinite;
+        }
+        /* Countdown Animation */
+        @keyframes count-scale {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        .animate-countdown {
+            animation: count-scale 1s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect, useMemo, useCallback } = React;
+
+        // --- 아이콘 컴포넌트 ---
+        const Icon = ({ children, size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const Mic = (props) => <Icon {...props}><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></Icon>;
+        const Square = (props) => <Icon {...props}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></Icon>;
+        const Play = (props) => <Icon {...props}><polygon points="5 3 19 12 5 21 5 3"/></Icon>;
+        const Pause = (props) => <Icon {...props}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></Icon>;
+        const RotateCcw = (props) => <Icon {...props}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></Icon>;
+        const Upload = (props) => <Icon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></Icon>;
+        const FileText = (props) => <Icon {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></Icon>;
+        const Check = (props) => <Icon {...props}><polyline points="20 6 9 17 4 12"/></Icon>;
+        const Volume2 = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></Icon>;
+        const ArrowRight = (props) => <Icon {...props}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></Icon>;
+        const ArrowLeft = (props) => <Icon {...props}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></Icon>;
+        const Headphones = (props) => <Icon {...props}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></Icon>;
+        const Settings = (props) => <Icon {...props}><path d="M12.22 2h-.44a2 2 0 0 1-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></Icon>;
+        const X = (props) => <Icon {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
+        const Repeat = (props) => <Icon {...props}><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></Icon>;
+        const Star = (props) => <Icon {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></Icon>;
+        const Frown = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></Icon>;
+        const Home = (props) => <Icon {...props}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></Icon>;
+        const Save = (props) => <Icon {...props}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></Icon>;
+        const Activity = (props) => <Icon {...props}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
+
+        // --- 문자열 유사도 계산 (Levenshtein Distance) ---
+        const getSimilarity = (s1, s2) => {
+            let longer = s1;
+            let shorter = s2;
+            if (s1.length < s2.length) {
+                longer = s2;
+                shorter = s1;
+            }
+            const longerLength = longer.length;
+            if (longerLength === 0) {
+                return 1.0;
+            }
+            const editDistance = (s1, s2) => {
+                s1 = s1.toLowerCase();
+                s2 = s2.toLowerCase();
+                const costs = new Array();
+                for (let i = 0; i <= s1.length; i++) {
+                    let lastValue = i;
+                    for (let j = 0; j <= s2.length; j++) {
+                        if (i == 0) costs[j] = j;
+                        else {
+                            if (j > 0) {
+                                let newValue = costs[j - 1];
+                                if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                    newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                                costs[j - 1] = lastValue;
+                                lastValue = newValue;
+                            }
+                        }
+                    }
+                    if (i > 0) costs[s2.length] = lastValue;
+                }
+                return costs[s2.length];
+            }
+            return (longerLength - editDistance(longer, shorter)) / longerLength;
+        }
+
+        // --- 오디오 비주얼라이저 ---
+        const AudioVisualizer = ({ audioBuffer, color = '#4ade80', height = 100 }) => {
+            const canvasRef = useRef(null);
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas || !audioBuffer) return;
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                const data = audioBuffer.getChannelData(0);
+                const step = Math.ceil(data.length / width);
+                const amp = height / 2;
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                for (let i = 0; i < width; i++) {
+                    let min = 1.0; let max = -1.0;
+                    for (let j = 0; j < step; j++) {
+                        const datum = data[(i * step) + j];
+                        if (datum < min) min = datum; if (datum > max) max = datum;
+                    }
+                    ctx.fillRect(i, (1 + min) * amp, 1, Math.max(1, (max - min) * amp));
+                }
+            }, [audioBuffer, color]);
+            return <canvas ref={canvasRef} width={600} height={height} className="w-full h-full bg-slate-900 rounded-lg shadow-inner" />;
+        };
+
+        // --- 라이브 비주얼라이저 ---
+        const LiveVisualizer = ({ stream, isRecording }) => {
+            const canvasRef = useRef(null);
+            const animationRef = useRef(null);
+            const audioContextRef = useRef(null);
+            const analyserRef = useRef(null);
+            const sourceRef = useRef(null);
+            useEffect(() => {
+                if (!isRecording || !stream) {
+                    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+                    return;
+                }
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                analyserRef.current = audioContextRef.current.createAnalyser();
+                sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
+                sourceRef.current.connect(analyserRef.current);
+                analyserRef.current.fftSize = 256;
+                const bufferLength = analyserRef.current.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                const draw = () => {
+                    animationRef.current = requestAnimationFrame(draw);
+                    analyserRef.current.getByteFrequencyData(dataArray);
+                    ctx.fillStyle = 'rgb(15, 23, 42)';
+                    ctx.fillRect(0, 0, width, height);
+                    const barWidth = (width / bufferLength) * 2.5;
+                    let x = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        const barHeight = dataArray[i] / 2;
+                        ctx.fillStyle = `rgb(${barHeight + 100}, 250, 150)`;
+                        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+                        x += barWidth + 1;
+                    }
+                };
+                draw();
+                return () => {
+                    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+                    if (audioContextRef.current) audioContextRef.current.close();
+                };
+            }, [isRecording, stream]);
+            return <canvas ref={canvasRef} width={300} height={80} className="w-full rounded-md" />;
+        };
+
+        // --- 설정 모달 ---
+        const SettingsModal = ({ isOpen, onClose, preferredGender, setPreferredGender, csvText, setCsvText, onRestart }) => {
+            const fileInputRef = useRef(null);
+            if (!isOpen) return null;
+            const handleFileUpload = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => setCsvText(e.target.result);
+                reader.readAsText(file);
+            };
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="bg-slate-900 p-4 flex items-center justify-between flex-shrink-0">
+                            <h3 className="text-white font-bold flex items-center gap-2"><Settings size={20} /> 설정</h3>
+                            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors"><X size={24} /></button>
+                        </div>
+                        <div className="p-6 space-y-6 overflow-y-auto">
+                            <div>
+                                <label className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2 block">음성 목소리 (Voice)</label>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setPreferredGender('female')} className={`flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${preferredGender === 'female' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-200'}`}>여성 (US English)</button>
+                                    <button onClick={() => setPreferredGender('male')} className={`flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${preferredGender === 'male' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-200'}`}>남성 (US English)</button>
+                                </div>
+                            </div>
+                            <div className="h-px bg-slate-100 w-full"></div>
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">학습 데이터</label>
+                                    <button onClick={() => fileInputRef.current?.click()} className="text-xs flex items-center gap-1 text-slate-600 hover:text-indigo-600 font-medium px-2 py-1 bg-slate-100 rounded transition-colors"><Upload size={12} /> 파일 불러오기</button>
+                                    <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".csv,.txt" className="hidden" />
+                                </div>
+                                <textarea className="w-full h-24 p-3 border border-slate-200 rounded-lg text-xs font-mono focus:ring-2 focus:ring-indigo-500 outline-none resize-none bg-slate-50 mb-2" value={csvText} onChange={(e) => setCsvText(e.target.value)} />
+                                <button onClick={onRestart} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"><RotateCcw size={16} /> 저장 후 재시작</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 미션 결과 모달 ---
+        const MissionModal = ({ isOpen, isSuccess, onReview, onClose }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-8 transform transition-all scale-100">
+                        <div className="mb-6 flex justify-center">
+                            {isSuccess ? (
+                                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-500 animate-bounce-short">
+                                    <Star size={40} fill="currentColor" />
+                                </div>
+                            ) : (
+                                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-500">
+                                    <Frown size={40} />
+                                </div>
+                            )}
+                        </div>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                            {isSuccess ? "미션 성공!" : "미션 실패"}
+                        </h2>
+                        <p className="text-slate-600 mb-8">
+                            {isSuccess 
+                                ? "모든 문장을 빠짐없이 녹음했습니다.\n훌륭해요!" 
+                                : "녹음하지 않고 넘어간 문장이 있습니다.\n다음엔 꼭 도전해보세요!"}
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <button 
+                                onClick={onReview}
+                                className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg"
+                            >
+                                전체 듣기(Review) 모드로 이동
+                            </button>
+                            <button 
+                                onClick={onClose}
+                                className="w-full py-3 bg-white text-slate-500 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
+                            >
+                                닫기 (이 화면에 머무르기)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 카운트다운 오버레이 ---
+        const CountdownOverlay = ({ count }) => {
+            if (count === null) return null;
+            return (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10 rounded-xl">
+                    <div className="text-8xl font-bold text-white animate-countdown">
+                        {count}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 메인 App ---
+        function App() {
+            const [step, setStep] = useState('setup');
+            const [csvText, setCsvText] = useState("안녕하세요,Hello\n이것은 예제입니다,This is an example\n영어를 배우자,Let's learn English");
+            const [cards, setCards] = useState([]);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [showSettings, setShowSettings] = useState(false);
+            
+            // Settings
+            const [availableVoices, setAvailableVoices] = useState([]);
+            const [preferredGender, setPreferredGender] = useState('female');
+            const [reviewConfig, setReviewConfig] = useState({ count: 3, autoNext: true });
+            const [activeVoiceName, setActiveVoiceName] = useState('');
+
+            // Repeater Step Flow: 'idle' -> 'playing_tts' -> 'countdown' -> 'recording' -> 'result'
+            const [repeaterState, setRepeaterState] = useState('idle'); 
+            const [repeaterCount, setRepeaterCount] = useState(null);
+
+            // Review Mode
+            const [reviewStatus, setReviewStatus] = useState({ index: 0, repeatCount: 0, isPlaying: false, isFinished: false });
+            const [review2Index, setReview2Index] = useState(0);
+            const [isReview2Recording, setIsReview2Recording] = useState(false);
+            const [review2Finished, setReview2Finished] = useState(false);
+
+            // Recorder
+            const [isRecording, setIsRecording] = useState(false);
+            const [mediaRecorder, setMediaRecorder] = useState(null);
+            const [audioStream, setAudioStream] = useState(null);
+            const [userAudioBuffer, setUserAudioBuffer] = useState(null);
+            const [userAudioUrl, setUserAudioUrl] = useState(null);
+            const [recordingStatus, setRecordingStatus] = useState({});
+            const [missionResult, setMissionResult] = useState({ show: false, success: false });
+            
+            // Accuracy
+            const [accuracyScore, setAccuracyScore] = useState(null);
+            const recognitionRef = useRef(null);
+
+            const fileInputRef = useRef(null);
+            const audioContextRef = useRef(null);
+
+            useEffect(() => {
+                const updateVoices = () => {
+                    const voices = window.speechSynthesis.getVoices();
+                    if(voices.length > 0) setAvailableVoices(voices);
+                };
+                updateVoices();
+                window.speechSynthesis.onvoiceschanged = updateVoices;
+            }, []);
+
+            // --- Repeater Auto Flow Logic ---
+            const startRepeaterFlow = () => {
+                setRepeaterState('playing_tts');
+                setAccuracyScore(null);
+                setUserAudioBuffer(null);
+                setUserAudioUrl(null);
+                playTTS(cards[currentIndex].eng, () => {
+                    // TTS Finished -> Start Countdown
+                    setRepeaterState('countdown');
+                    setRepeaterCount(3);
+                });
+            };
+
+            // Countdown Effect
+            useEffect(() => {
+                if (step === 'repeating' && repeaterState === 'countdown' && repeaterCount !== null) {
+                    if (repeaterCount > 0) {
+                        const timer = setTimeout(() => setRepeaterCount(c => c - 1), 1000);
+                        return () => clearTimeout(timer);
+                    } else {
+                        // Countdown Finished -> Start Recording
+                        setRepeaterState('recording');
+                        setRepeaterCount(null);
+                        startRecording(true); // Auto-stop enabled
+                    }
+                }
+            }, [step, repeaterState, repeaterCount]);
+
+
+            const parseCSV = () => {
+                const lines = csvText.trim().split('\n');
+                const parsed = lines.map(line => {
+                    const commaIndex = line.indexOf(',');
+                    if (commaIndex > -1) {
+                        const k = line.substring(0, commaIndex).trim();
+                        const e = line.substring(commaIndex + 1).trim();
+                        if (k && e) return { kor: k, eng: e };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+
+                if (parsed.length > 0) {
+                    setCards(parsed);
+                    setStep('repeating');
+                    setCurrentIndex(0);
+                    setShowSettings(false);
+                    setUserAudioBuffer(null);
+                    setUserAudioUrl(null);
+                    setRecordingStatus({}); 
+                    setMissionResult({ show: false, success: false });
+                    setAccuracyScore(null);
+                    setRepeaterState('idle');
+                } else {
+                    alert("데이터 형식을 확인해주세요 (한글,영어)");
+                }
+            };
+
+            const startReviewDirectly = () => {
+                const lines = csvText.trim().split('\n');
+                const parsed = lines.map(line => {
+                    const commaIndex = line.indexOf(',');
+                    if (commaIndex > -1) {
+                        const k = line.substring(0, commaIndex).trim();
+                        const e = line.substring(commaIndex + 1).trim();
+                        if (k && e) return { kor: k, eng: e };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+                
+                if (parsed.length > 0) {
+                    setCards(parsed);
+                    setReviewStatus({ index: 0, repeatCount: 0, isPlaying: true, isFinished: false });
+                    setStep('review1');
+                    setShowSettings(false);
+                } else {
+                    alert("데이터 형식을 확인해주세요 (한글,영어)");
+                }
+            };
+
+            const startReview2 = () => {
+                setStep('review2');
+                setReview2Index(0);
+                setIsReview2Recording(false);
+                setReview2Finished(false);
+            };
+
+            const startLongRecording = async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    setAudioStream(stream);
+                    const recorder = new MediaRecorder(stream);
+                    setMediaRecorder(recorder);
+                    const chunks = [];
+                    recorder.ondataavailable = (e) => { 
+                        if (e.data.size > 0) chunks.push(e.data);
+                    };
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'audio/webm' });
+                        const url = URL.createObjectURL(blob);
+                        const now = new Date();
+                        const fileName = `EnglishMaster_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.webm`;
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        stream.getTracks().forEach(track => track.stop());
+                        setReview2Finished(true); 
+                    };
+                    recorder.start();
+                    setIsReview2Recording(true);
+                } catch (err) {
+                    alert("마이크 권한이 필요합니다.");
+                }
+            };
+
+            const stopLongRecording = () => {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                    setIsReview2Recording(false);
+                }
+            };
+
+            const handleReview2Next = () => {
+                if (review2Index < cards.length - 1) {
+                    setReview2Index(prev => prev + 1);
+                } else {
+                    stopLongRecording();
+                }
+            };
+
+            // Enhanced startRecording with SpeechRecognition for auto-stop
+            const startRecording = async (isAutoStop = false) => {
+                setAccuracyScore(null);
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    setAudioStream(stream);
+                    const recorder = new MediaRecorder(stream);
+                    setMediaRecorder(recorder);
+                    const chunks = [];
+                    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+                    
+                    recorder.onstop = async () => {
+                        const blob = new Blob(chunks, { type: 'audio/webm' });
+                        const url = URL.createObjectURL(blob);
+                        setUserAudioUrl(url);
+                        if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                        const arrayBuffer = await blob.arrayBuffer();
+                        const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+                        setUserAudioBuffer(audioBuffer);
+                        
+                        if (step === 'learning') {
+                            setRecordingStatus(prev => ({ ...prev, [currentIndex]: true }));
+                        }
+                        stream.getTracks().forEach(track => track.stop());
+                        
+                        if (step === 'repeating') setRepeaterState('result');
+                    };
+                    
+                    recorder.start();
+                    setIsRecording(true);
+                    setUserAudioBuffer(null);
+                    setUserAudioUrl(null);
+
+                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        recognitionRef.current = new SpeechRecognition();
+                        recognitionRef.current.lang = 'en-US';
+                        recognitionRef.current.continuous = false;
+                        recognitionRef.current.interimResults = false;
+
+                        recognitionRef.current.onresult = (event) => {
+                            const transcript = event.results[0][0].transcript;
+                            const targetText = cards[currentIndex].eng;
+                            const similarity = getSimilarity(targetText, transcript);
+                            const score = Math.round(similarity * 100);
+                            setAccuracyScore(score);
+                        };
+
+                        // Auto stop logic when speech ends
+                        if (isAutoStop) {
+                            recognitionRef.current.onspeechend = () => {
+                                // Add small delay to capture last bit of audio
+                                setTimeout(() => {
+                                    if (recorder.state === 'recording') {
+                                        recorder.stop();
+                                        setIsRecording(false);
+                                        recognitionRef.current.stop();
+                                    }
+                                }, 800); 
+                            };
+                        }
+
+                        recognitionRef.current.onerror = (event) => {
+                            if (event.error === 'no-speech') {
+                                console.warn("No speech detected");
+                                // If no speech in auto mode, stop eventually
+                                if (isAutoStop && recorder.state === 'recording') {
+                                    recorder.stop();
+                                    setIsRecording(false);
+                                }
+                            }
+                        };
+
+                        try {
+                            recognitionRef.current.start();
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+
+                } catch (err) {
+                    alert("마이크 권한이 필요합니다.");
+                }
+            };
+
+            const stopRecording = () => {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                    setIsRecording(false);
+                    if (recognitionRef.current) recognitionRef.current.stop();
+                    if (step === 'learning') setTimeout(() => setStep('result'), 800);
+                }
+            };
+
+            const playTTS = useCallback((text, onEndCallback = null) => {
+                if (!('speechSynthesis' in window)) return;
+                window.speechSynthesis.cancel();
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.9;
+                    utterance.lang = 'en-US'; 
+                    let voices = window.speechSynthesis.getVoices();
+                    if (voices.length === 0) voices = availableVoices;
+                    const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+                    let selectedVoice = null;
+                    if (preferredGender === 'male') {
+                        selectedVoice = enVoices.find(v => (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Daniel')) && (v.name.toLowerCase().includes('male') || v.lang === 'en-US'));
+                    } else {
+                        selectedVoice = enVoices.find(v => (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Zira') || v.name.includes('Samantha')) && (v.name.toLowerCase().includes('female') || v.lang === 'en-US'));
+                    }
+                    if (!selectedVoice) selectedVoice = enVoices.find(v => v.lang === 'en-US');
+                    if (!selectedVoice) selectedVoice = enVoices[0];
+                    if (selectedVoice) {
+                        utterance.voice = selectedVoice;
+                        utterance.lang = selectedVoice.lang;
+                        setActiveVoiceName(selectedVoice.name);
+                    }
+                    if (onEndCallback) utterance.onend = onEndCallback;
+                    utterance.onerror = (e) => { if (onEndCallback) onEndCallback(); };
+                    window.currentUtterance = utterance; 
+                    window.speechSynthesis.speak(utterance);
+                }, 50);
+            }, [availableVoices, preferredGender]);
+
+            const playUserAudio = () => userAudioUrl && new Audio(userAudioUrl).play();
+
+            // TTS Auto play (Only for Result phase now)
+            useEffect(() => {
+                if ((step === 'result') && cards[currentIndex] && !showSettings && !missionResult.show) {
+                    const timer = setTimeout(() => playTTS(cards[currentIndex].eng), 500);
+                    return () => { clearTimeout(timer); window.speechSynthesis.cancel(); };
+                }
+            }, [step, currentIndex, cards, showSettings, playTTS, missionResult.show]);
+
+            // Review Loop
+            useEffect(() => {
+                if (step === 'review1' && reviewStatus.isPlaying && !showSettings && !reviewStatus.isFinished) {
+                    const currentCard = cards[reviewStatus.index];
+                    if (!currentCard) return;
+                    const handleTTSEnd = () => {
+                        setReviewStatus(prev => {
+                            const nextRepeatCount = prev.repeatCount + 1;
+                            if (nextRepeatCount < reviewConfig.count) {
+                                return { ...prev, repeatCount: nextRepeatCount };
+                            } else {
+                                if (reviewConfig.autoNext) {
+                                    if (prev.index < cards.length - 1) {
+                                        return { index: prev.index + 1, repeatCount: 0, isPlaying: true, isFinished: false };
+                                    } else {
+                                        return { ...prev, isPlaying: false, isFinished: true };
+                                    }
+                                } else {
+                                    return { ...prev, repeatCount: nextRepeatCount, isPlaying: false };
+                                }
+                            }
+                        });
+                    };
+                    const timer = setTimeout(() => { playTTS(currentCard.eng, handleTTSEnd); }, 500);
+                    return () => { clearTimeout(timer); window.speechSynthesis.cancel(); };
+                }
+            }, [step, reviewStatus.index, reviewStatus.repeatCount, reviewStatus.isPlaying, reviewStatus.isFinished, showSettings, cards, reviewConfig, playTTS]);
+
+            const handleNext = () => {
+                if (currentIndex < cards.length - 1) {
+                    if (step === 'repeating') {
+                        setStep('learning');
+                        setUserAudioBuffer(null);
+                        setUserAudioUrl(null);
+                        setAccuracyScore(null);
+                    } else if (step === 'result') {
+                        setCurrentIndex(prev => prev + 1);
+                        setStep('repeating');
+                        setRepeaterState('idle'); // Reset for next card
+                        setUserAudioBuffer(null);
+                        setUserAudioUrl(null);
+                        setAccuracyScore(null);
+                    }
+                } else {
+                    if (step === 'repeating') {
+                        setStep('learning');
+                    } else if (step === 'result') {
+                         let allRecorded = true;
+                        for (let i = 0; i < cards.length; i++) {
+                            if (!recordingStatus[i]) {
+                                allRecorded = false;
+                                break;
+                            }
+                        }
+                        setMissionResult({ show: true, success: allRecorded });
+                    }
+                }
+            };
+
+            const handleGoToReview = () => {
+                setMissionResult({ ...missionResult, show: false });
+                setStep('review1');
+                setReviewStatus({ index: 0, repeatCount: 0, isPlaying: true, isFinished: false });
+            };
+
+            const handlePrev = () => {
+                if (step === 'repeating') {
+                    if (currentIndex > 0) { 
+                        setCurrentIndex(prev => prev - 1); 
+                        setStep('result'); 
+                        setUserAudioBuffer(null);
+                        setAccuracyScore(null);
+                    } else {
+                        alert("첫 문장입니다.");
+                    }
+                } else if (step === 'learning') {
+                    setStep('repeating'); 
+                } else if (step === 'result') {
+                    setStep('learning'); 
+                }
+            };
+
+            const handleRetry = () => { setStep('learning'); setUserAudioBuffer(null); setUserAudioUrl(null); };
+            const goToShadowing = () => { setStep('learning'); };
+
+            const handleReviewNext = () => {
+                if (reviewStatus.index < cards.length - 1) {
+                    setReviewStatus({ index: reviewStatus.index + 1, repeatCount: 0, isPlaying: true, isFinished: false });
+                } else {
+                    alert("마지막 문장입니다.");
+                }
+            };
+            const handleReviewPrev = () => {
+                if (reviewStatus.index > 0) {
+                    setReviewStatus({ index: reviewStatus.index - 1, repeatCount: 0, isPlaying: true, isFinished: false });
+                }
+            };
+            const toggleReviewPlay = () => {
+                setReviewStatus(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
+            };
+
+            const Header = ({ title, textColor = "text-slate-500" }) => (
+                <div className="w-full max-w-lg mb-6 flex items-center justify-between">
+                    <button onClick={() => setStep('setup')} className={`${textColor} hover:underline text-xs flex items-center gap-1`}><ArrowLeft size={12} /> 처음으로</button>
+                    <div className="flex items-center gap-2">
+                        {activeVoiceName && <span className="text-[10px] text-slate-300 bg-slate-800 px-2 py-1 rounded max-w-[100px] truncate">{activeVoiceName}</span>}
+                        <button onClick={() => setShowSettings(true)} className={`p-2 rounded-full hover:bg-black/10 transition-colors ${textColor}`}><Settings size={20} /></button>
+                    </div>
+                </div>
+            );
+
+            const settingsProps = { isOpen: showSettings, onClose: () => setShowSettings(false), preferredGender, setPreferredGender, csvText, setCsvText, onRestart: parseCSV };
+
+            // --- RENDER SCREENS ---
+
+            if (step === 'setup') {
+                return (
+                    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 flex flex-col items-center justify-center">
+                        <SettingsModal {...settingsProps} />
+                        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+                            <div className="bg-indigo-600 p-6 text-center"><h1 className="text-2xl font-bold text-white mb-2">English Master</h1><p className="text-indigo-200 text-sm">자료를 입력하고 말하기 연습을 시작하세요</p></div>
+                            <div className="p-6 space-y-6 flex flex-col gap-4">
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100"><label className="text-xs font-bold text-indigo-800 uppercase tracking-wider mb-2 flex items-center gap-1"><Headphones size={14} /> 음성 목소리 선택</label><div className="flex gap-2 mt-2"><button onClick={() => setPreferredGender('female')} className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${preferredGender === 'female' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-200'}`}>여성 (US English)</button><button onClick={() => setPreferredGender('male')} className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${preferredGender === 'male' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-200'}`}>남성 (US English)</button></div></div>
+                                <button onClick={parseCSV} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"><Play size={20} /> 학습 시작하기</button>
+                                <button onClick={startReviewDirectly} className="w-full bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-bold py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2"><Repeat size={20} /> 전체 복습하기</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Step 1: Listen & Repeat (Auto Mode Included)
+            if (step === 'repeating') {
+                const currentCard = cards[currentIndex];
+                return (
+                    <div className="min-h-screen bg-indigo-50 text-slate-900 font-sans p-6 flex flex-col items-center">
+                        <SettingsModal {...settingsProps} />
+                        <Header title="Repeater" textColor="text-slate-500" />
+                        <div className="w-full max-w-lg mb-8"><div className="flex justify-between text-xs text-slate-500 mb-2"><span>Card {currentIndex + 1} / {cards.length}</span><span className="font-bold text-indigo-600">STEP 1: Listen & Repeat</span></div><div className="h-1 bg-slate-200 rounded-full overflow-hidden"><div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${((currentIndex) / cards.length) * 100}%` }} /></div></div>
+                        
+                        <div className="flex-1 flex flex-col w-full max-w-lg space-y-6 relative">
+                            {/* Text Section */}
+                            <div className="text-center space-y-4 animate-fade-in mb-4">
+                                <h2 className="text-3xl md:text-4xl font-bold leading-tight break-keep text-slate-900">{currentCard.eng}</h2>
+                                <p className="text-lg text-slate-500 font-medium">{currentCard.kor}</p>
+                            </div>
+
+                            {/* Reference Audio Section */}
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-indigo-100">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-xs font-bold text-indigo-500 uppercase">Reference Audio & Auto Practice</span>
+                                    <button 
+                                        onClick={startRepeaterFlow} 
+                                        disabled={repeaterState !== 'idle' && repeaterState !== 'result'}
+                                        className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center gap-2 ${repeaterState !== 'idle' && repeaterState !== 'result' ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                                    >
+                                        <Volume2 size={20} />
+                                        <span className="text-sm font-bold">Listen & Repeat Start</span>
+                                    </button>
+                                </div>
+                                <div className="h-2 bg-indigo-50 rounded-full overflow-hidden">
+                                     {repeaterState === 'playing_tts' && <div className="h-full bg-indigo-400 w-full animate-pulse"></div>}
+                                </div>
+                            </div>
+
+                            {/* User Recording Section */}
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-indigo-100 relative">
+                                {/* Countdown Overlay */}
+                                {repeaterState === 'countdown' && (
+                                    <CountdownOverlay count={repeaterCount} />
+                                )}
+                                
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-xs font-bold text-slate-500 uppercase">My Recording</span>
+                                    {userAudioUrl && !isRecording && (
+                                        <button onClick={playUserAudio} className="p-2 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition-colors"><Play size={18} /></button>
+                                    )}
+                                </div>
+                                <div className="h-24 bg-slate-900 rounded-lg overflow-hidden relative flex items-center justify-center">
+                                    {isRecording ? (
+                                        <LiveVisualizer stream={audioStream} isRecording={isRecording} />
+                                    ) : userAudioBuffer ? (
+                                        <AudioVisualizer audioBuffer={userAudioBuffer} color="#4ade80" height={64} />
+                                    ) : (
+                                        <div className="text-slate-500 text-xs flex flex-col items-center">
+                                            <span>Ready to Record</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Accuracy Score */}
+                            {accuracyScore !== null && (
+                                <div className="bg-green-50 border border-green-200 p-4 rounded-xl flex items-center justify-between animate-fade-in shadow-sm">
+                                    <span className="text-sm font-bold text-green-700 uppercase">Pronunciation Score</span>
+                                    <div className="flex items-center gap-2">
+                                        <Activity size={20} className="text-green-600" />
+                                        <span className="text-2xl font-bold text-green-700">{accuracyScore}%</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Navigation */}
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <button onClick={handlePrev} className="py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 flex items-center justify-center gap-2"><ArrowLeft size={18} /> Prev</button>
+                                <button onClick={handleNext} className="py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 flex items-center justify-center gap-2">Step 2 (Shadowing) <ArrowRight size={18} /></button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Review Phase 1 (Listening)
+            if (step === 'review1') {
+                const currentCard = cards[reviewStatus.index];
+                const progress = ((reviewStatus.index + 1) / cards.length) * 100;
+                
+                if (reviewStatus.isFinished) {
+                    return (
+                        <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center justify-center text-center">
+                            <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full">
+                                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-900">
+                                    <Check size={40} strokeWidth={3} />
+                                </div>
+                                <h2 className="text-2xl font-bold mb-2">1단계(듣기) 완료!</h2>
+                                <p className="text-slate-400 mb-8">모든 문장을 들었습니다.<br/>이제 실전 말하기 단계입니다!</p>
+                                <div className="flex flex-col gap-3">
+                                    <button onClick={startReview2} className="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg animate-pulse-ring"><Mic size={20} /> 2단계(실전 통녹음) 이동</button>
+                                    <button onClick={() => setStep('setup')} className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"><Home size={20} /> 처음으로 돌아가기</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center">
+                        <SettingsModal {...settingsProps} />
+                        <div className="w-full max-w-lg mb-6 flex items-center justify-between">
+                            <button onClick={() => setStep('setup')} className="text-slate-400 hover:text-white text-xs flex items-center gap-1"><ArrowLeft size={12} /> 나가기</button>
+                            <button onClick={() => setShowSettings(true)} className="p-2 text-slate-400 hover:bg-slate-800 rounded-full"><Settings size={20} /></button>
+                        </div>
+                        <div className="w-full max-w-lg bg-slate-800 rounded-xl p-4 mb-8">
+                            <label className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3 block flex items-center gap-2"><Repeat size={14} /> 전체 복습 1단계: 듣기</label>
+                            <div className="flex flex-col gap-3">
+                                <div className="flex justify-between items-center text-sm text-slate-300"><span>문장 반복 횟수</span><div className="flex items-center gap-2"><button onClick={() => setReviewConfig({...reviewConfig, count: Math.max(1, reviewConfig.count - 1)})} className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-white">-</button><span className="w-6 text-center font-mono font-bold">{reviewConfig.count}</span><button onClick={() => setReviewConfig({...reviewConfig, count: Math.min(10, reviewConfig.count + 1)})} className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-white">+</button></div></div>
+                                <div className="flex justify-between items-center text-sm text-slate-300"><span>자동 넘어가기</span><button onClick={() => setReviewConfig({...reviewConfig, autoNext: !reviewConfig.autoNext})} className={`w-12 h-6 rounded-full transition-colors relative ${reviewConfig.autoNext ? 'bg-indigo-500' : 'bg-slate-600'}`}><div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${reviewConfig.autoNext ? 'left-7' : 'left-1'}`}></div></button></div>
+                            </div>
+                        </div>
+                        <div className="w-full max-w-lg mb-8"><div className="flex justify-between text-xs text-slate-400 mb-2"><span>Phase 1 ({reviewStatus.index + 1}/{cards.length})</span><span className="text-indigo-400 font-bold">Repeat: {reviewStatus.repeatCount + 1}/{reviewConfig.count}</span></div><div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${progress}%` }} /></div></div>
+                        <div className="flex-1 flex flex-col justify-center w-full max-w-lg space-y-8"><div className="text-center space-y-6 animate-fade-in"><div className="inline-block p-4 bg-indigo-500/20 rounded-full mb-2"><Volume2 size={48} className="text-indigo-400" /></div><h2 className="text-2xl md:text-3xl font-bold leading-tight break-keep text-white">{currentCard.eng}</h2><p className="text-lg text-slate-500 font-medium">{currentCard.kor}</p></div><div className="flex justify-center items-center gap-6 mt-8"><button onClick={handleReviewPrev} className="p-4 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"><ArrowLeft size={24} /></button><button onClick={toggleReviewPlay} className="w-20 h-20 bg-indigo-600 hover:bg-indigo-500 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95">{reviewStatus.isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}</button><button onClick={handleReviewNext} className="p-4 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"><ArrowRight size={24} /></button></div><div className="text-center mt-4"><button onClick={startReview2} className="text-xs text-slate-500 hover:text-white underline">2단계로 건너뛰기</button></div></div>
+                    </div>
+                );
+            }
+
+            // Review Phase 2 (Speaking - Long Recording)
+            if (step === 'review2') {
+                if (review2Finished) {
+                    return (
+                        <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center justify-center text-center">
+                            <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full">
+                                <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white"><Save size={40} /></div>
+                                <h2 className="text-2xl font-bold mb-2">녹음 저장 완료!</h2>
+                                <p className="text-slate-400 mb-8">전체 녹음 파일이 다운로드되었습니다.<br/>복습을 완료했습니다!</p>
+                                <div className="flex flex-col gap-3">
+                                    <button onClick={() => setStep('review1')} className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">1단계로 돌아가기</button>
+                                    <button onClick={() => setStep('setup')} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">처음 화면으로</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+                const currentCard = cards[review2Index];
+                const progress = ((review2Index + 1) / cards.length) * 100;
+                return (
+                    <div className="min-h-screen bg-slate-950 text-white font-sans p-6 flex flex-col items-center">
+                        <div className="w-full max-w-lg mb-6 flex items-center justify-between"><button onClick={() => setStep('review1')} className="text-slate-400 hover:text-white text-xs flex items-center gap-1"><ArrowLeft size={12} /> 1단계로</button><span className="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${isReview2Recording ? 'bg-red-500 animate-pulse' : 'bg-slate-600'}`}></div>Review Phase 2: Speaking</span></div>
+                        <div className="w-full max-w-lg mb-12"><div className="flex justify-between text-xs text-slate-400 mb-2"><span>Card {review2Index + 1} / {cards.length}</span><span>{isReview2Recording ? "REC ●" : "Ready"}</span></div><div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-red-500 transition-all duration-300" style={{ width: `${progress}%` }} /></div></div>
+                        <div className="flex-1 flex flex-col justify-center w-full max-w-lg space-y-12"><div className="text-center space-y-6 animate-fade-in"><span className="inline-block px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-semibold tracking-wider mb-2">SPEAK IN ENGLISH</span><h2 className="text-3xl md:text-5xl font-bold leading-tight break-keep text-white">{currentCard.kor}</h2></div><div className="h-24 flex items-center justify-center bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">{isReview2Recording ? (<LiveVisualizer stream={audioStream} isRecording={isReview2Recording} />) : (<span className="text-slate-600 text-sm">녹음 대기 중...</span>)}</div><div className="flex justify-center">{!isReview2Recording ? (<button onClick={startLongRecording} className="w-full py-5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 text-lg"><Mic size={24} /> 전체 녹음 시작</button>) : (<button onClick={handleReview2Next} className="w-full py-5 bg-white text-slate-900 font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 text-lg hover:bg-slate-100 active:scale-95">{review2Index < cards.length - 1 ? (<>다음 문장 <ArrowRight size={24} /></>) : (<>종료 및 저장 <Save size={24} /></>)}</button>)}</div></div>
+                    </div>
+                );
+            }
+
+            if (step === 'learning') {
+                const currentCard = cards[currentIndex];
+                return (
+                    <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center">
+                        <SettingsModal {...settingsProps} />
+                        <Header title="Shadowing" textColor="text-slate-400" />
+                        <div className="w-full max-w-lg mb-8"><div className="flex justify-between text-xs text-slate-400 mb-2"><span>Card {currentIndex + 1} / {cards.length}</span><span className="text-indigo-400 font-bold">STEP 2: Shadowing Test</span></div><div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${((currentIndex) / cards.length) * 100}%` }} /></div></div>
+                        <div className="flex-1 flex flex-col justify-center w-full max-w-lg space-y-8"><div className="text-center space-y-4 animate-fade-in"><span className="inline-block px-3 py-1 bg-indigo-900/50 text-indigo-300 rounded-full text-xs font-semibold tracking-wider mb-2">TRANSLATE THIS</span><h2 className="text-3xl md:text-4xl font-bold leading-tight break-keep">{currentCard.kor}</h2></div><div className="h-32 flex items-center justify-center bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700">{isRecording ? (<LiveVisualizer stream={audioStream} isRecording={isRecording} />) : (<div className="text-slate-500 flex flex-col items-center gap-2"><Mic size={24} className="opacity-50" /><span className="text-sm">버튼을 눌러 녹음하세요</span></div>)}</div><div className="flex justify-center items-center gap-6"><button onClick={handlePrev} className="p-3 text-slate-500 hover:text-white transition-colors"><ArrowLeft size={24} /></button>{!isRecording ? (<button onClick={startRecording} className="w-20 h-20 bg-red-500 hover:bg-red-600 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95"><Mic size={32} className="text-white" /></button>) : (<button onClick={stopRecording} className="w-20 h-20 bg-slate-700 hover:bg-slate-600 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95 border-4 border-red-500 animate-pulse"><Square size={32} className="text-white fill-current" /></button>)}<div className="w-12"></div></div><div className="text-center"><button onClick={() => setStep('result')} className="text-slate-500 text-sm hover:text-white transition-colors">녹음 없이 정답 확인 &rarr;</button></div></div>
+                    </div>
+                );
+            }
+
+            if (step === 'result') {
+                const currentCard = cards[currentIndex];
+                return (
+                    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 flex flex-col items-center">
+                        <SettingsModal {...settingsProps} />
+                        <MissionModal isOpen={missionResult.show} isSuccess={missionResult.success} onReview={handleGoToReview} onClose={() => setMissionResult({ ...missionResult, show: false })} />
+                        <Header title="Result" />
+                        <div className="w-full max-w-lg flex flex-col h-full space-y-6"><div className="w-full flex justify-end"><span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">STEP 3: Result</span></div><div className="bg-white rounded-2xl shadow-sm p-6 border border-slate-100"><div className="text-sm text-slate-500 mb-1">한글 문장</div><div className="text-lg font-medium text-slate-700 mb-4">{currentCard.kor}</div><div className="h-px bg-slate-100 w-full mb-4"></div><div className="text-sm text-indigo-600 font-semibold mb-1 flex items-center gap-2"><Check size={14} /> 정답 (English)</div><div className="text-2xl font-bold text-slate-900 leading-snug">{currentCard.eng}</div></div><div className="flex-1 space-y-4"><div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100"><div className="flex items-center justify-between mb-2"><span className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Reference Audio (TTS)</span><button onClick={() => playTTS(currentCard.eng)} className="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors shadow-md"><Volume2 size={18} /></button></div><div className="h-16 bg-indigo-200/50 rounded-lg flex items-center justify-center text-indigo-400 text-xs"><div className="flex items-center gap-1 h-8">{[...Array(20)].map((_, i) => (<div key={i} className="w-1 bg-indigo-400 rounded-full animate-pulse" style={{ height: `${Math.random() * 100}%`, animationDelay: `${i * 0.05}s` }}></div>))}</div></div></div><div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"><div className="flex items-center justify-between mb-2"><span className="text-xs font-bold text-slate-500 uppercase tracking-wider">My Recording</span>{userAudioUrl && (<button onClick={playUserAudio} className="p-2 bg-slate-800 text-white rounded-full hover:bg-slate-700 transition-colors"><Play size={18} className="ml-0.5" /></button>)}</div><div className="h-24 bg-slate-900 rounded-lg overflow-hidden relative">{userAudioBuffer ? (<AudioVisualizer audioBuffer={userAudioBuffer} color="#4ade80" height={64} />) : (<div className="w-full h-full flex items-center justify-center text-slate-500 text-xs">녹음된 데이터 없음</div>)}</div></div></div><div className="grid grid-cols-3 gap-3 mt-auto pt-4"><button onClick={handlePrev} className="flex items-center justify-center gap-1 py-3 px-2 bg-white border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition-colors"><ArrowLeft size={18} /> 이전</button><button onClick={handleRetry} className="flex items-center justify-center gap-1 py-3 px-2 bg-white border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition-colors"><RotateCcw size={18} /> 재녹음</button><button onClick={handleNext} className="flex items-center justify-center gap-1 py-3 px-2 bg-slate-900 text-white rounded-xl font-semibold shadow-lg hover:bg-slate-800 transition-transform active:scale-95">{currentIndex < cards.length - 1 ? "다음 문장" : "전체 복습"} <ArrowRight size={18} /></button></div></div>
+                    </div>
+                );
+            }
+            return null;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
