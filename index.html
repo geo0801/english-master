@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>English Master</title>
     <!-- React 및 ReactDOM 라이브러리 -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -304,6 +304,8 @@
             // Repeater Step Flow: 'idle' -> 'playing_tts' -> 'countdown' -> 'recording' -> 'result'
             const [repeaterState, setRepeaterState] = useState('idle'); 
             const [repeaterCount, setRepeaterCount] = useState(null);
+            // Mobile auto-record fallback check
+            const [mobileAutoRecordFailed, setMobileAutoRecordFailed] = useState(false);
 
             // Review Mode
             const [reviewStatus, setReviewStatus] = useState({ index: 0, repeatCount: 0, isPlaying: false, isFinished: false });
@@ -333,7 +335,10 @@
                     if(voices.length > 0) setAvailableVoices(voices);
                 };
                 updateVoices();
-                window.speechSynthesis.onvoiceschanged = updateVoices;
+                // Mobile sometimes needs explicit trigger
+                if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                    window.speechSynthesis.onvoiceschanged = updateVoices;
+                }
             }, []);
 
             // --- Repeater Auto Flow Logic ---
@@ -342,6 +347,7 @@
                 setAccuracyScore(null);
                 setUserAudioBuffer(null);
                 setUserAudioUrl(null);
+                setMobileAutoRecordFailed(false);
                 playTTS(cards[currentIndex].eng, () => {
                     // TTS Finished -> Start Countdown
                     setRepeaterState('countdown');
@@ -359,7 +365,12 @@
                         // Countdown Finished -> Start Recording
                         setRepeaterState('recording');
                         setRepeaterCount(null);
-                        startRecording(true); // Auto-stop enabled
+                        // Try Auto Start
+                        startRecording(true).catch(err => {
+                            // If auto start fails (likely mobile), show manual button
+                            console.warn("Mobile auto-record blocked, fallback to manual");
+                            setMobileAutoRecordFailed(true);
+                        });
                     }
                 }
             }, [step, repeaterState, repeaterCount]);
@@ -449,7 +460,7 @@
                     recorder.start();
                     setIsReview2Recording(true);
                 } catch (err) {
-                    alert("마이크 권한이 필요합니다.");
+                    alert("마이크 권한이 필요합니다. (브라우저 설정 확인)");
                 }
             };
 
@@ -471,6 +482,8 @@
             // Enhanced startRecording with SpeechRecognition for auto-stop
             const startRecording = async (isAutoStop = false) => {
                 setAccuracyScore(null);
+                setMobileAutoRecordFailed(false);
+                
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     setAudioStream(stream);
@@ -501,8 +514,9 @@
                     setUserAudioBuffer(null);
                     setUserAudioUrl(null);
 
-                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    // Web Speech API Support Check
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (SpeechRecognition) {
                         recognitionRef.current = new SpeechRecognition();
                         recognitionRef.current.lang = 'en-US';
                         recognitionRef.current.continuous = false;
@@ -519,7 +533,6 @@
                         // Auto stop logic when speech ends
                         if (isAutoStop) {
                             recognitionRef.current.onspeechend = () => {
-                                // Add small delay to capture last bit of audio
                                 setTimeout(() => {
                                     if (recorder.state === 'recording') {
                                         recorder.stop();
@@ -533,23 +546,26 @@
                         recognitionRef.current.onerror = (event) => {
                             if (event.error === 'no-speech') {
                                 console.warn("No speech detected");
-                                // If no speech in auto mode, stop eventually
-                                if (isAutoStop && recorder.state === 'recording') {
-                                    recorder.stop();
-                                    setIsRecording(false);
-                                }
+                                // On mobile, if silence, just stop recording after a while or handle manually
+                            } else {
+                                console.warn("STT Error:", event.error);
                             }
                         };
 
                         try {
                             recognitionRef.current.start();
                         } catch (e) {
-                            console.error(e);
+                            console.warn("STT start failed:", e);
                         }
+                    } else {
+                        console.warn("Speech Recognition API not supported in this browser");
                     }
 
                 } catch (err) {
-                    alert("마이크 권한이 필요합니다.");
+                    console.error("Mic Error:", err);
+                    // Critical for mobile: if user didn't tap, this throws error.
+                    if (isAutoStop) throw err; 
+                    else alert("마이크 권한을 확인해주세요.");
                 }
             };
 
@@ -562,32 +578,45 @@
                 }
             };
 
+            // --- TTS Logic: Mobile Optimized ---
             const playTTS = useCallback((text, onEndCallback = null) => {
                 if (!('speechSynthesis' in window)) return;
+                
                 window.speechSynthesis.cancel();
+
+                // Small delay is crucial for mobile browsers to reset audio context
                 setTimeout(() => {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.rate = 0.9;
-                    utterance.lang = 'en-US'; 
+                    
+                    // 1. Get Voices
                     let voices = window.speechSynthesis.getVoices();
                     if (voices.length === 0) voices = availableVoices;
-                    const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
-                    let selectedVoice = null;
-                    if (preferredGender === 'male') {
-                        selectedVoice = enVoices.find(v => (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Daniel')) && (v.name.toLowerCase().includes('male') || v.lang === 'en-US'));
+
+                    // 2. Strict English Priority Selection
+                    // Find any voice that contains 'en-US' or 'en_US'
+                    let targetVoice = voices.find(v => v.lang.replace('_', '-').toLowerCase() === 'en-us');
+                    
+                    // If no US voice, find any English voice
+                    if (!targetVoice) {
+                        targetVoice = voices.find(v => v.lang.toLowerCase().startsWith('en'));
+                    }
+
+                    // 3. Apply Voice & Enforce Lang
+                    if (targetVoice) {
+                        utterance.voice = targetVoice;
+                        utterance.lang = targetVoice.lang; // Important!
+                        setActiveVoiceName(targetVoice.name);
                     } else {
-                        selectedVoice = enVoices.find(v => (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Zira') || v.name.includes('Samantha')) && (v.name.toLowerCase().includes('female') || v.lang === 'en-US'));
+                        // Fallback hard
+                        utterance.lang = 'en-US';
+                        setActiveVoiceName('Default (en-US)');
                     }
-                    if (!selectedVoice) selectedVoice = enVoices.find(v => v.lang === 'en-US');
-                    if (!selectedVoice) selectedVoice = enVoices[0];
-                    if (selectedVoice) {
-                        utterance.voice = selectedVoice;
-                        utterance.lang = selectedVoice.lang;
-                        setActiveVoiceName(selectedVoice.name);
-                    }
+
                     if (onEndCallback) utterance.onend = onEndCallback;
-                    utterance.onerror = (e) => { if (onEndCallback) onEndCallback(); };
-                    window.currentUtterance = utterance; 
+                    
+                    // Prevent immediate garbage collection
+                    window.currentUtterance = utterance;
                     window.speechSynthesis.speak(utterance);
                 }, 50);
             }, [availableVoices, preferredGender]);
@@ -733,7 +762,7 @@
                 );
             }
 
-            // Step 1: Listen & Repeat (Auto Mode Included)
+            // Step 1: Listen & Repeat (Auto Mode Included with Mobile Fallback)
             if (step === 'repeating') {
                 const currentCard = cards[currentIndex];
                 return (
@@ -780,9 +809,16 @@
                                         <button onClick={playUserAudio} className="p-2 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition-colors"><Play size={18} /></button>
                                     )}
                                 </div>
+                                
+                                {/* Recording Status / Fallback Button */}
                                 <div className="h-24 bg-slate-900 rounded-lg overflow-hidden relative flex items-center justify-center">
                                     {isRecording ? (
                                         <LiveVisualizer stream={audioStream} isRecording={isRecording} />
+                                    ) : mobileAutoRecordFailed ? (
+                                        <button onClick={() => startRecording(true)} className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full animate-bounce-short shadow-lg">
+                                            <Mic size={20} /> 
+                                            <span>터치하여 녹음하기 (Mobile)</span>
+                                        </button>
                                     ) : userAudioBuffer ? (
                                         <AudioVisualizer audioBuffer={userAudioBuffer} color="#4ade80" height={64} />
                                     ) : (
@@ -807,7 +843,7 @@
                             {/* Navigation */}
                             <div className="grid grid-cols-2 gap-4 mt-4">
                                 <button onClick={handlePrev} className="py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 flex items-center justify-center gap-2"><ArrowLeft size={18} /> Prev</button>
-                                <button onClick={handleNext} className="py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 flex items-center justify-center gap-2">Step 2 (Shadowing) <ArrowRight size={18} /></button>
+                                <button onClick={handleNext} className="py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 flex items-center justify-center gap-2">Next (Step 2) <ArrowRight size={18} /></button>
                             </div>
                         </div>
                     </div>
