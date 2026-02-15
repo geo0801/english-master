@@ -27,9 +27,9 @@
             50% { transform: translateY(0); }
         }
         @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
         }
         .animate-pulse-ring {
             animation: pulse-ring 2s infinite;
@@ -70,7 +70,7 @@
         const ArrowRight = (props) => <Icon {...props}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></Icon>;
         const ArrowLeft = (props) => <Icon {...props}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></Icon>;
         const Headphones = (props) => <Icon {...props}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></Icon>;
-        const Settings = (props) => <Icon {...props}><path d="M12.22 2h-.44a2 2 0 0 1-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></Icon>;
+        const Settings = (props) => <Icon {...props}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></Icon>;
         const X = (props) => <Icon {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
         const Repeat = (props) => <Icon {...props}><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></Icon>;
         const Star = (props) => <Icon {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></Icon>;
@@ -82,6 +82,7 @@
         const Smartphone = (props) => <Icon {...props}><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></Icon>;
         const ChevronLeft = (props) => <Icon {...props}><polyline points="15 18 9 12 15 6" /></Icon>;
         const ChevronRight = (props) => <Icon {...props}><polyline points="9 18 15 12 9 6" /></Icon>;
+        const Award = (props) => <Icon {...props}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></Icon>;
 
 
         // --- 문자열 유사도 계산 (Levenshtein Distance) ---
@@ -303,14 +304,20 @@
             // Repeater Step Flow: 'idle' -> 'playing_tts' -> 'countdown' -> 'recording' -> 'result'
             const [repeaterState, setRepeaterState] = useState('idle'); 
             const [repeaterCount, setRepeaterCount] = useState(null);
-            // Mobile auto-record fallback check
+            
+            // Mobile Check
+            const [isMobile, setIsMobile] = useState(false);
             const [mobileAutoRecordFailed, setMobileAutoRecordFailed] = useState(false);
 
-            // Review Mode
+            // Mastery Mode States (New)
+            const [masteryQueue, setMasteryQueue] = useState([]); // Indices of cards to test
+            const [masteryFailedQueue, setMasteryFailedQueue] = useState([]); // Indices failed in current round
+            const [masteryRound, setMasteryRound] = useState(1);
+            const [masteryState, setMasteryState] = useState('question'); // 'question', 'listening', 'result'
+
+            // Review Mode (Old Phase 1 for Listening)
             const [reviewStatus, setReviewStatus] = useState({ index: 0, repeatCount: 0, isPlaying: false, isFinished: false });
-            const [review2Index, setReview2Index] = useState(0);
-            const [isReview2Recording, setIsReview2Recording] = useState(false);
-            const [review2Finished, setReview2Finished] = useState(false);
+            // Review2 removed - replaced by Mastery
 
             // Recorder
             const [isRecording, setIsRecording] = useState(false);
@@ -328,7 +335,6 @@
             
             // Check for SpeechRecognition Support
             const [isSTTAvailable, setIsSTTAvailable] = useState(true);
-            const [isMobile, setIsMobile] = useState(false);
 
             const fileInputRef = useRef(null);
             const audioContextRef = useRef(null);
@@ -452,6 +458,7 @@
                 }
             };
 
+            // ** Definition of startReviewDirectly (Fixed) **
             const startReviewDirectly = () => {
                 const lines = csvText.trim().split('\n');
                 const parsed = lines.map(line => {
@@ -467,63 +474,10 @@
                 if (parsed.length > 0) {
                     setCards(parsed);
                     setReviewStatus({ index: 0, repeatCount: 0, isPlaying: true, isFinished: false });
-                    setStep('review1');
+                    setStep('review1'); // Go to Listening Review
                     setShowSettings(false);
                 } else {
                     alert("데이터 형식을 확인해주세요 (한글,영어)");
-                }
-            };
-
-            const startReview2 = () => {
-                setStep('review2');
-                setReview2Index(0);
-                setIsReview2Recording(false);
-                setReview2Finished(false);
-            };
-
-            const startLongRecording = async () => {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    setAudioStream(stream);
-                    const recorder = new MediaRecorder(stream);
-                    setMediaRecorder(recorder);
-                    const chunks = [];
-                    recorder.ondataavailable = (e) => { 
-                        if (e.data.size > 0) chunks.push(e.data);
-                    };
-                    recorder.onstop = () => {
-                        const blob = new Blob(chunks, { type: 'audio/webm' });
-                        const url = URL.createObjectURL(blob);
-                        const now = new Date();
-                        const fileName = `EnglishMaster_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.webm`;
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        stream.getTracks().forEach(track => track.stop());
-                        setReview2Finished(true); 
-                    };
-                    recorder.start();
-                    setIsReview2Recording(true);
-                } catch (err) {
-                    alert("마이크 권한이 필요합니다. (브라우저 설정 확인)");
-                }
-            };
-
-            const stopLongRecording = () => {
-                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                    mediaRecorder.stop();
-                    setIsReview2Recording(false);
-                }
-            };
-
-            const handleReview2Next = () => {
-                if (review2Index < cards.length - 1) {
-                    setReview2Index(prev => prev + 1);
-                } else {
-                    stopLongRecording();
                 }
             };
 
@@ -559,6 +513,7 @@
                                 setUserAudioBuffer(audioBuffer);
                                 
                                 stream.getTracks().forEach(track => track.stop());
+                                
                                 if (step === 'repeating') setRepeaterState('result');
                             };
                             
@@ -598,7 +553,14 @@
                             
                             const transcript = finalTranscript || interimTranscript;
                             if (transcript) {
-                                const targetText = cards[currentIndex].eng;
+                                let targetText = "";
+                                if (step === 'mastery') {
+                                    const realIndex = masteryQueue[currentIndex];
+                                    targetText = cards[realIndex].eng;
+                                } else {
+                                    targetText = cards[currentIndex].eng;
+                                }
+                                
                                 const similarity = getSimilarity(targetText, transcript);
                                 const score = Math.round(similarity * 100);
                                 setAccuracyScore(score);
@@ -640,6 +602,60 @@
                 }
             };
 
+            // New Listening Starter for Mastery (No MediaRecorder needed)
+            const startListening = () => {
+                 setAccuracyScore(null);
+                 setRecognitionStatus('listening');
+                 setIsRecording(true);
+                 
+                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                 if (!SpeechRecognition) return;
+
+                 recognitionRef.current = new SpeechRecognition();
+                 recognitionRef.current.lang = 'en-US';
+                 recognitionRef.current.continuous = false;
+                 recognitionRef.current.interimResults = true;
+
+                 recognitionRef.current.onresult = (event) => {
+                    let interim = '';
+                    let final = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) final += event.results[i][0].transcript;
+                        else interim += event.results[i][0].transcript;
+                    }
+                    const transcript = final || interim;
+                    
+                    let targetText = "";
+                    if (step === 'mastery') {
+                        const realIndex = masteryQueue[currentIndex];
+                        targetText = cards[realIndex].eng;
+                    } else {
+                        targetText = cards[currentIndex].eng;
+                    }
+
+                    if (transcript) {
+                        const score = Math.round(getSimilarity(targetText, transcript) * 100);
+                        setAccuracyScore(score);
+                    }
+                 };
+
+                 recognitionRef.current.onspeechend = () => {
+                     setTimeout(() => stopListening(), 800);
+                 };
+
+                 try { recognitionRef.current.start(); } catch(e) {}
+            };
+            
+            const stopListening = () => {
+                if (recognitionRef.current) recognitionRef.current.stop();
+                setIsRecording(false);
+                setRecognitionStatus('idle');
+                
+                if (step === 'mastery' && accuracyScore !== null) {
+                    setTimeout(() => setMasteryState('result'), 500);
+                }
+            };
+
             const stopRecording = () => {
                 if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                     mediaRecorder.stop();
@@ -653,7 +669,7 @@
                 if (step === 'learning') setTimeout(() => setStep('result'), 800);
             };
 
-            // --- TTS Logic: Mobile Optimized with Safety Timer ---
+            // --- TTS Logic ---
             const playTTS = useCallback((text, onEndCallback = null) => {
                 if (!('speechSynthesis' in window)) return;
                 
@@ -671,7 +687,6 @@
                     if (!targetVoice) targetVoice = enVoices[0];
 
                     if (targetVoice) {
-                        // Apply gender preference if possible within EN voices
                         if (preferredGender === 'male') {
                              const maleVoice = enVoices.find(v => v.name.toLowerCase().includes('male') || v.name.includes('David'));
                              if (maleVoice) targetVoice = maleVoice;
@@ -679,7 +694,6 @@
                              const femaleVoice = enVoices.find(v => v.name.toLowerCase().includes('female') || v.name.includes('Zira') || v.name.includes('Google'));
                              if (femaleVoice) targetVoice = femaleVoice;
                         }
-
                         utterance.voice = targetVoice;
                         utterance.lang = targetVoice.lang;
                         setActiveVoiceName(targetVoice.name);
@@ -698,8 +712,11 @@
 
                     utterance.onend = finish;
                     utterance.onerror = (e) => {
-                        console.error("TTS Error", e);
-                        finish();
+                         const errorMessage = e.error || 'Unknown';
+                         if (errorMessage !== 'interrupted' && errorMessage !== 'canceled') {
+                             console.error("TTS Error", e);
+                         }
+                         finish();
                     };
                     
                     const estimatedDuration = Math.max(2000, text.length * 150);
@@ -712,7 +729,7 @@
 
             const playUserAudio = () => userAudioUrl && new Audio(userAudioUrl).play();
 
-            // TTS Auto play (Only for Result phase now)
+            // TTS Auto play
             useEffect(() => {
                 if ((step === 'result') && cards[currentIndex] && !showSettings && !missionResult.show) {
                     const timer = setTimeout(() => playTTS(cards[currentIndex].eng), 500);
@@ -720,33 +737,31 @@
                 }
             }, [step, currentIndex, cards, showSettings, playTTS, missionResult.show]);
 
-            // Review Loop
+            // Review Phase 1 Loop
+            const [review1Status, setReview1Status] = useState({ index: 0, count: 0, playing: false });
             useEffect(() => {
-                if (step === 'review1' && reviewStatus.isPlaying && !showSettings && !reviewStatus.isFinished) {
-                    const currentCard = cards[reviewStatus.index];
-                    if (!currentCard) return;
+                if (step === 'review1' && review1Status.playing) {
+                    if (review1Status.index >= cards.length) {
+                         // End of Review 1 -> Auto Start Mastery
+                         startMasteryMode();
+                         return;
+                    }
+
+                    const currentCard = cards[review1Status.index];
                     const handleTTSEnd = () => {
-                        setReviewStatus(prev => {
-                            const nextRepeatCount = prev.repeatCount + 1;
-                            if (nextRepeatCount < reviewConfig.count) {
-                                return { ...prev, repeatCount: nextRepeatCount };
+                        setReview1Status(prev => {
+                            const nextCount = prev.count + 1;
+                            if (nextCount < reviewConfig.count) {
+                                return { ...prev, count: nextCount };
                             } else {
-                                if (reviewConfig.autoNext) {
-                                    if (prev.index < cards.length - 1) {
-                                        return { index: prev.index + 1, repeatCount: 0, isPlaying: true, isFinished: false };
-                                    } else {
-                                        return { ...prev, isPlaying: false, isFinished: true };
-                                    }
-                                } else {
-                                    return { ...prev, repeatCount: nextRepeatCount, isPlaying: false };
-                                }
+                                return { ...prev, index: prev.index + 1, count: 0 };
                             }
                         });
                     };
                     const timer = setTimeout(() => { playTTS(currentCard.eng, handleTTSEnd); }, 500);
                     return () => { clearTimeout(timer); window.speechSynthesis.cancel(); };
                 }
-            }, [step, reviewStatus.index, reviewStatus.repeatCount, reviewStatus.isPlaying, reviewStatus.isFinished, showSettings, cards, reviewConfig, playTTS]);
+            }, [step, review1Status, reviewConfig, playTTS]);
 
             const handleNext = () => {
                 if (currentIndex < cards.length - 1) {
@@ -784,7 +799,7 @@
             const handleGoToReview = () => {
                 setMissionResult({ ...missionResult, show: false });
                 setStep('review1');
-                setReviewStatus({ index: 0, repeatCount: 0, isPlaying: true, isFinished: false });
+                setReview1Status({ index: 0, count: 0, playing: true });
             };
 
             const handlePrev = () => {
@@ -810,20 +825,58 @@
             const handleRetry = () => { setStep('learning'); setUserAudioBuffer(null); setUserAudioUrl(null); };
             const goToShadowing = () => { setStep('learning'); };
 
-            const handleReviewNext = () => {
-                if (reviewStatus.index < cards.length - 1) {
-                    setReviewStatus({ index: reviewStatus.index + 1, repeatCount: 0, isPlaying: true, isFinished: false });
-                } else {
-                    alert("마지막 문장입니다.");
+            // Mastery Mode Logic
+            const startMasteryMode = () => {
+                setStep('mastery');
+                const allIndices = cards.map((_, i) => i);
+                setMasteryQueue(allIndices);
+                setMasteryFailedQueue([]);
+                setMasteryRound(1);
+                setCurrentIndex(0); 
+                setMasteryState('question'); 
+                setAccuracyScore(null);
+            };
+
+            const handleMasteryVerdict = (passed) => {
+                const realIndex = masteryQueue[currentIndex];
+                
+                if (!passed) {
+                    setMasteryFailedQueue(prev => [...prev, realIndex]);
                 }
+
+                if (currentIndex >= masteryQueue.length - 1) {
+                    // Round Finished
+                    finishMasteryRound(passed ? masteryFailedQueue : [...masteryFailedQueue, realIndex]);
+                } else {
+                    setCurrentIndex(prev => prev + 1);
+                    setMasteryState('question');
+                    setAccuracyScore(null);
+                }
+            };
+
+            const finishMasteryRound = (nextQueue) => {
+                if (nextQueue.length === 0) {
+                    setStep('all_clear');
+                } else {
+                    alert(`${masteryRound}라운드 종료! 틀린 ${nextQueue.length}문장만 다시 테스트합니다.`);
+                    setMasteryQueue(nextQueue);
+                    setMasteryFailedQueue([]);
+                    setMasteryRound(prev => prev + 1);
+                    setCurrentIndex(0);
+                    setMasteryState('question');
+                    setAccuracyScore(null);
+                }
+            };
+
+            // Review1 Controls
+            const handleReviewNext = () => {
+                setReview1Status(prev => ({...prev, index: prev.index + 1, count: 0}));
             };
             const handleReviewPrev = () => {
-                if (reviewStatus.index > 0) {
-                    setReviewStatus({ index: reviewStatus.index - 1, repeatCount: 0, isPlaying: true, isFinished: false });
-                }
+                if (review1Status.index > 0) setReview1Status(prev => ({...prev, index: prev.index - 1, count: 0}));
             };
             const toggleReviewPlay = () => {
-                setReviewStatus(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
+                setReview1Status(prev => ({...prev, playing: !prev.playing}));
             };
 
             const Header = ({ title, textColor = "text-slate-500" }) => (
@@ -856,7 +909,7 @@
                 );
             }
 
-            // Step 1: Listen & Repeat (Auto Mode Included with Mobile Fallback)
+            // Step 1: Listen & Repeat
             if (step === 'repeating') {
                 const currentCard = cards[currentIndex];
                 return (
@@ -919,7 +972,7 @@
                                 
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-xs font-bold text-slate-500 uppercase">My Recording</span>
-                                    {!isMobile && userAudioUrl && !isRecording && (
+                                    {userAudioUrl && !isRecording && (
                                         <button onClick={playUserAudio} className="p-2 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition-colors"><Play size={18} /></button>
                                     )}
                                 </div>
@@ -988,26 +1041,8 @@
 
             // Review Phase 1 (Listening)
             if (step === 'review1') {
-                const currentCard = cards[reviewStatus.index];
-                const progress = ((reviewStatus.index + 1) / cards.length) * 100;
-                
-                if (reviewStatus.isFinished) {
-                    return (
-                        <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center justify-center text-center">
-                            <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full">
-                                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-900">
-                                    <Check size={40} strokeWidth={3} />
-                                </div>
-                                <h2 className="text-2xl font-bold mb-2">1단계(듣기) 완료!</h2>
-                                <p className="text-slate-400 mb-8">모든 문장을 들었습니다.<br/>이제 실전 말하기 단계입니다!</p>
-                                <div className="flex flex-col gap-3">
-                                    <button onClick={startReview2} className="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg animate-pulse-ring"><Mic size={20} /> 2단계(실전 통녹음) 이동</button>
-                                    <button onClick={() => setStep('setup')} className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"><Home size={20} /> 처음으로 돌아가기</button>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                }
+                const currentCard = cards[review1Status.index] || cards[0];
+                const progress = ((review1Status.index) / cards.length) * 100;
 
                 return (
                     <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center">
@@ -1023,36 +1058,86 @@
                                 <div className="flex justify-between items-center text-sm text-slate-300"><span>자동 넘어가기</span><button onClick={() => setReviewConfig({...reviewConfig, autoNext: !reviewConfig.autoNext})} className={`w-12 h-6 rounded-full transition-colors relative ${reviewConfig.autoNext ? 'bg-indigo-500' : 'bg-slate-600'}`}><div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${reviewConfig.autoNext ? 'left-7' : 'left-1'}`}></div></button></div>
                             </div>
                         </div>
-                        <div className="w-full max-w-lg mb-8"><div className="flex justify-between text-xs text-slate-400 mb-2"><span>Phase 1 ({reviewStatus.index + 1}/{cards.length})</span><span className="text-indigo-400 font-bold">Repeat: {reviewStatus.repeatCount + 1}/{reviewConfig.count}</span></div><div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${progress}%` }} /></div></div>
-                        <div className="flex-1 flex flex-col justify-center w-full max-w-lg space-y-8"><div className="text-center space-y-6 animate-fade-in"><div className="inline-block p-4 bg-indigo-500/20 rounded-full mb-2"><Volume2 size={48} className="text-indigo-400" /></div><h2 className="text-2xl md:text-3xl font-bold leading-tight break-keep text-white">{currentCard.eng}</h2><p className="text-lg text-slate-500 font-medium">{currentCard.kor}</p></div><div className="flex justify-center items-center gap-6 mt-8"><button onClick={handleReviewPrev} className="p-4 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"><ArrowLeft size={24} /></button><button onClick={toggleReviewPlay} className="w-20 h-20 bg-indigo-600 hover:bg-indigo-500 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95">{reviewStatus.isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}</button><button onClick={handleReviewNext} className="p-4 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"><ArrowRight size={24} /></button></div><div className="text-center mt-4"><button onClick={startReview2} className="text-xs text-slate-500 hover:text-white underline">2단계로 건너뛰기</button></div></div>
+                        <div className="w-full max-w-lg mb-8"><div className="flex justify-between text-xs text-slate-400 mb-2"><span>Review 1 ({review1Status.index + 1}/{cards.length})</span><span className="text-indigo-400 font-bold">Repeat: {review1Status.count + 1}/{reviewConfig.count}</span></div><div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${progress}%` }} /></div></div>
+                        <div className="flex-1 flex flex-col justify-center w-full max-w-lg space-y-8"><div className="text-center space-y-6 animate-fade-in"><div className="inline-block p-4 bg-indigo-500/20 rounded-full mb-2"><Volume2 size={48} className="text-indigo-400" /></div><h2 className="text-2xl md:text-3xl font-bold leading-tight break-keep text-white">{currentCard.eng}</h2><p className="text-lg text-slate-500 font-medium">{currentCard.kor}</p></div><div className="flex justify-center items-center gap-6 mt-8"><button onClick={handleReviewPrev} className="p-4 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"><ArrowLeft size={24} /></button><button onClick={toggleReviewPlay} className="w-20 h-20 bg-indigo-600 hover:bg-indigo-500 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95">{review1Status.playing ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}</button><button onClick={handleReviewNext} className="p-4 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"><ArrowRight size={24} /></button></div><div className="text-center mt-4"><button onClick={startMasteryMode} className="text-xs text-slate-500 hover:text-white underline">2단계(암기 테스트)로 건너뛰기</button></div></div>
                     </div>
                 );
             }
 
-            // Review Phase 2 (Speaking - Long Recording)
-            if (step === 'review2') {
-                if (review2Finished) {
-                    return (
-                        <div className="min-h-screen bg-slate-900 text-white font-sans p-6 flex flex-col items-center justify-center text-center">
-                            <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full">
-                                <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white"><Save size={40} /></div>
-                                <h2 className="text-2xl font-bold mb-2">녹음 저장 완료!</h2>
-                                <p className="text-slate-400 mb-8">전체 녹음 파일이 다운로드되었습니다.<br/>복습을 완료했습니다!</p>
-                                <div className="flex flex-col gap-3">
-                                    <button onClick={() => setStep('review1')} className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">1단계로 돌아가기</button>
-                                    <button onClick={() => setStep('setup')} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">처음 화면으로</button>
+            // All Clear Screen
+            if (step === 'all_clear') {
+                return (
+                    <div className="min-h-screen bg-indigo-600 text-white font-sans p-6 flex flex-col items-center justify-center text-center">
+                         <div className="mb-6 animate-bounce-short"><Star size={80} fill="#fbbf24" stroke="none" /></div>
+                         <h1 className="text-4xl font-bold mb-4">CONGRATULATIONS!</h1>
+                         <p className="text-indigo-100 text-lg mb-8">모든 문장을 완벽하게 암기하셨습니다.<br/>총 {masteryRound}라운드 만에 성공!</p>
+                         <button onClick={() => setStep('setup')} className="bg-white text-indigo-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-50 transition-colors">처음으로 돌아가기</button>
+                    </div>
+                );
+            }
+
+            // Review Phase 2 (Mastery Test)
+            if (step === 'mastery') {
+                const realIndex = masteryQueue[currentIndex];
+                const currentCard = cards[realIndex];
+                
+                return (
+                    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans p-4 flex flex-col items-center">
+                        <div className="w-full max-w-lg mb-6 flex justify-between items-center">
+                            <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold">ROUND {masteryRound}</span>
+                            <span className="text-xs text-slate-500">남은 문장: {masteryQueue.length - currentIndex}개</span>
+                        </div>
+
+                        <div className="flex-1 w-full max-w-lg flex flex-col justify-center space-y-6">
+                            {/* Card Area */}
+                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-100 text-center min-h-[240px] flex flex-col justify-center items-center relative overflow-hidden">
+                                <h2 className="text-3xl font-bold text-slate-800 break-keep mb-4">{currentCard.kor}</h2>
+                                {masteryState === 'result' && (
+                                    <div className="animate-fade-in w-full">
+                                        <div className="h-px bg-slate-100 w-full my-4"></div>
+                                        <h3 className="text-xl font-bold text-indigo-600 mb-1">{currentCard.eng}</h3>
+                                        <div className={`mt-2 font-bold ${accuracyScore >= 85 ? 'text-green-500' : 'text-red-500'}`}>
+                                            점수: {accuracyScore}%
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Action Area */}
+                            {masteryState === 'question' && (
+                                <button 
+                                    onClick={isRecording ? stopListening : startListening}
+                                    className={`w-full py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-2 transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                                >
+                                    {isRecording ? "Listening..." : "마이크 누르고 영어로 말하기"} <Mic />
+                                </button>
+                            )}
+
+                            {masteryState === 'result' && (
+                                <div className="space-y-3 animate-fade-in">
+                                    {/* Success Case */}
+                                    {accuracyScore >= 85 ? (
+                                        <button onClick={() => handleMasteryVerdict(true)} className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
+                                            <Check /> 통과! (Next)
+                                        </button>
+                                    ) : (
+                                        /* Fail Case with Options */
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <button onClick={() => handleMasteryVerdict(false)} className="py-4 bg-red-100 text-red-600 font-bold rounded-xl hover:bg-red-200">
+                                                틀렸음 (재도전)
+                                            </button>
+                                            <button onClick={() => handleMasteryVerdict(true)} className="py-4 bg-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-300">
+                                                강제 통과 (Pass)
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
+                            )}
+
+                            <div className="text-center">
+                                <button onClick={() => playTTS(currentCard.eng)} className="text-slate-400 text-sm flex items-center justify-center gap-1 mx-auto hover:text-indigo-500"><Volume2 size={16}/> 정답 듣기 (힌트)</button>
                             </div>
                         </div>
-                    );
-                }
-                const currentCard = cards[review2Index];
-                const progress = ((review2Index + 1) / cards.length) * 100;
-                return (
-                    <div className="min-h-screen bg-slate-950 text-white font-sans p-6 flex flex-col items-center">
-                        <div className="w-full max-w-lg mb-6 flex items-center justify-between"><button onClick={() => setStep('review1')} className="text-slate-400 hover:text-white text-xs flex items-center gap-1"><ArrowLeft size={12} /> 1단계로</button><span className="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${isReview2Recording ? 'bg-red-500 animate-pulse' : 'bg-slate-600'}`}></div>Review Phase 2: Speaking</span></div>
-                        <div className="w-full max-w-lg mb-12"><div className="flex justify-between text-xs text-slate-400 mb-2"><span>Card {review2Index + 1} / {cards.length}</span><span>{isReview2Recording ? "REC ●" : "Ready"}</span></div><div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-red-500 transition-all duration-300" style={{ width: `${progress}%` }} /></div></div>
-                        <div className="flex-1 flex flex-col justify-center w-full max-w-lg space-y-12"><div className="text-center space-y-6 animate-fade-in"><span className="inline-block px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-semibold tracking-wider mb-2">SPEAK IN ENGLISH</span><h2 className="text-3xl md:text-5xl font-bold leading-tight break-keep text-white">{currentCard.kor}</h2></div><div className="h-24 flex items-center justify-center bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">{isReview2Recording ? (<LiveVisualizer stream={audioStream} isRecording={isReview2Recording} />) : (<span className="text-slate-600 text-sm">녹음 대기 중...</span>)}</div><div className="flex justify-center">{!isReview2Recording ? (<button onClick={startLongRecording} className="w-full py-5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 text-lg"><Mic size={24} /> 전체 녹음 시작</button>) : (<button onClick={handleReview2Next} className="w-full py-5 bg-white text-slate-900 font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 text-lg hover:bg-slate-100 active:scale-95">{review2Index < cards.length - 1 ? (<>다음 문장 <ArrowRight size={24} /></>) : (<>종료 및 저장 <Save size={24} /></>)}</button>)}</div></div>
                     </div>
                 );
             }
